@@ -3,6 +3,7 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
     public Vector3 spawnPoint;
+    public bool checkpointPassed = false;
 
     void Start()
     {
@@ -19,7 +20,14 @@ public class BallController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Goal"))
+        if (other.CompareTag("Checkpoint"))
+        {
+            spawnPoint = other.transform.position;
+            checkpointPassed = true;
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.CompareTag("Goal") && checkpointPassed)
         {
             GameManager.instance.Win();
         }
@@ -36,7 +44,8 @@ public class BallController : MonoBehaviour
     void Respawn()
     {
         transform.position = spawnPoint;
-        GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 }
